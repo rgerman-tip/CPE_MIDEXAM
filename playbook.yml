@@ -1,0 +1,23 @@
+---
+- name: Install ELK Stack, Nagios, Grafana, Prometheus, InfluxDB and Lamp Stack in Ubuntu
+  become: yes
+  hosts: ubuntu
+  roles:
+    - elk_ubuntu
+    - nagios_ubuntu
+    - grafana_ubuntu
+    - prometheus_ubuntu
+    - influxdb_ubuntu
+    - lamp_ubuntu
+    
+
+- name: install ELK Stack, Grafana, Prometheus, InfluxDB and Lamp Stack in CentOS
+  become: yes
+  hosts: centos
+  roles:
+    - elk_centos
+    - grafana_centos
+    - prometheus_centos
+    - influxdb_centos
+    - lamp_centos
+

@@ -1,0 +1,90 @@
+---
+# tasks file for nagios_ubuntu
+- name: Install Nagios packages
+  apt:
+    name:
+      - autoconf
+      - gcc
+      - libc6
+      - make
+      - wget
+      - unzip
+      - apache2
+      - php
+      - libapache2-mod-php7.4
+      - libgd-dev
+    state: latest
+    update_cache: yes
+
+- name: Stop Firewall
+  service:
+    name: ufw
+    state: stopped
+    enabled: no
+
+- name: Download and unarchive Nagios core
+  unarchive:
+    src: https://github.com/NagiosEnterprises/nagioscore/archive/nagios-4.4.5.tar.gz
+    dest: /tmp/
+    remote_src: yes
+  register: nagios_source
+
+- name: Make file
+  shell: cd /tmp/nagioscore-nagios-4.4.5; sh /tmp/nagioscore-nagios-4.4.5/configure --with-httpd-conf=/etc/apache2/sites-enabled
+  register: make_file
+
+- name: Compile from source
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5/
+    target: all
+  become: yes
+
+- name: Create user and group
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5
+    target: install-groups-users
+  become: yes
+
+- name: Add www-data user to Nagios group
+  user:
+    name: www-data
+    groups: nagios
+    append: yes
+
+- name: Install Binaries
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5
+    target: install
+  become: yes
+
+- name: Install Service
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5
+    target: install-daemoninit
+  become: yes
+
+- name: Install command mode
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5
+    target: install-commandmode
+  become: yes
+
+- name: Install configuration files
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5
+    target: install-config
+  become: yes
+
+- name: Install apache config files
+  make:
+    chdir: /tmp/nagioscore-nagios-4.4.5
+    target: install-webconf
+  become: yes
+  register: install_webconf
+
+- name: Start and enable nagios
+  service:
+    name: nagios
+    state: started
+    enabled: yes
+      

@@ -1,0 +1,38 @@
+---
+# tasks file for elk_ubuntu
+- name: Install ELK Stack packages for Ubuntu
+  apt:
+    name:
+      - default-jre
+      - nginx
+    state: latest
+    update_cache: yes
+
+- name: Add ELK Stack apt key
+  apt_key:
+    url: "https://artifacts.elastic.co/GPG-KEY-elasticsearch"
+    state: present
+
+- name: Add ELK Stack repository
+  apt_repository:
+    repo: "deb https://artifacts.elastic.co/packages/7.x/apt stable main"
+    state: present
+    filename: "elasticsearch.list"
+
+- name: Install elasticsearch
+  apt:
+    name: elasticsearch
+    state: latest
+    update_cache: yes
+
+- name: Install Kibana
+  apt:
+    update_cache: yes
+    name: kibana
+    state: present
+
+- name: Install Logstash
+  apt:
+    name: logstash
+    state: present
+

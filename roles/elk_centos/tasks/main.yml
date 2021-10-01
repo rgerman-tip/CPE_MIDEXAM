@@ -1,0 +1,39 @@
+---
+# tasks file for elk_centos
+- name: Install ELK Stack packages for CentOS
+  yum:
+    name:
+      - java-11-openjdk
+      - nginx
+    state: latest
+    update_cache: yes
+
+- name: Add elk rpm key
+  rpm_key:
+    key: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    state: present
+
+- name: Add elk repository
+  yum_repository:
+    name: elasticsearch-7.x
+    description: Adds repository key
+    baseurl: https://artifacts.elastic.co/packages/7.x/yum
+    gpgcheck: True
+    gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: Install elasticsearch
+  yum:
+    name: elasticsearch
+    state: latest
+    update_cache: yes
+
+- name: Install kibana
+  dnf:
+    name: kibana
+    state: present
+
+- name: Install logstash
+  dnf:
+    name: logstash
+    state: present
+

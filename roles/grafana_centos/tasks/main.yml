@@ -1,0 +1,21 @@
+---
+# tasks file for grafana
+- name: Add  Grafana gpg key
+  rpm_key:
+    key: https://packages.grafana.com/gpg.key
+    state: present
+
+- name: Add Grafana repository
+  yum_repository:
+    name: grafana
+    description: Adds the repository of grafana
+    baseurl: https://packages.grafana.com/oss/rpm
+    gpgcheck: True
+    gpgkey: https://packages.grafana.com/gpg.key
+
+- name: Install Grafana
+  yum:
+    name: grafana
+    state: latest
+    update_cache: yes
+
